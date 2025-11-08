@@ -33,6 +33,14 @@
 
 led_and_buz 文件中有 led 和 buz 的驱动，如果开发板没有，需要按照教程安装
 
+效果如下:
+<p align="center">
+  <img src="https://github.com/user-attachments/assets/19362536-16e7-4a36-9d1d-badfe7dd55a2" alt="界面1" width="400">
+  <img src="https://github.com/user-attachments/assets/8e1d420d-8a75-4fe9-ac04-c8d446698a96" alt="界面2" width="400">
+  <img src="https://github.com/user-attachments/assets/83faf474-333e-469f-b535-6be9c68401be" alt="界面3" width="400">
+  <img src="https://github.com/user-attachments/assets/493cba2f-cd11-45f0-9094-b7bb35284596" alt="界面4" width="400">
+</p>
+
 注意事项
 本项目仅供学习参考，实际部署需根据硬件设备（如传感器、执行器）进行适配
 确保运行设备已启用帧缓冲（/dev/fb0 存在），且支持触摸屏（如需交互操作）
