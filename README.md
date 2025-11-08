@@ -39,6 +39,9 @@ led_and_buz 文件中有 led 和 buz 的驱动，如果开发板没有，需要�
   <img src="https://github.com/user-attachments/assets/8e1d420d-8a75-4fe9-ac04-c8d446698a96" alt="界面2" width="400">
   <img src="https://github.com/user-attachments/assets/83faf474-333e-469f-b535-6be9c68401be" alt="界面3" width="400">
   <img src="https://github.com/user-attachments/assets/493cba2f-cd11-45f0-9094-b7bb35284596" alt="界面4" width="400">
+  <img src="https://github.com/user-attachments/assets/7095076d-b515-4cae-be0b-502b44fcb8ce" alt="界面5" width="400">
+  <img src="https://github.com/user-attachments/assets/8920b45b-f992-4378-a93e-59b1393514fe" alt="界面6" width="400">
+  <img src="https://github.com/user-attachments/assets/2983d3d6-4935-43ae-bf5d-f8147653a552" alt="界面7" width="400">
 </p>
 
 注意事项
