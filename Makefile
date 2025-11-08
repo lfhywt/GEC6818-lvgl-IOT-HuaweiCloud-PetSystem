@@ -5,7 +5,7 @@ CC = arm-linux-gcc
 LVGL_DIR_NAME ?= lvgl
 LVGL_DIR ?= ${shell pwd}
 CFLAGS ?= -O3 -g0   -I$(LVGL_DIR)/ -Wall  -std=gnu99
-LDFLAGS ?= -lm 
+LDFLAGS ?= -lm -lpthread
 BIN = demo
 TESTSRC = $(wildcard ./test/*.c)
 #TESTSRC = ./test/mywin.c  ./test/chinese_ziku.c  ./test/lv_font_source_han_sans_bold_20.c

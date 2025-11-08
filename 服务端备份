@@ -1,0 +1,158 @@
+#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include <unistd.h>
+#include <arpa/inet.h>
+#include <sys/socket.h>
+#include <sys/stat.h>
+#include <fcntl.h>
+
+#define SERVER_IP "192.168.171.60"
+#define SERVER_PORT 10000
+
+// -------------------- 工具函数：发送固定字节 --------------------
+ssize_t send_all(int sock, const void *buf, size_t len)
+{
+    size_t total = 0;
+    while (total < len)
+    {
+        ssize_t n = send(sock, (char *)buf + total, len - total, 0);
+        if (n <= 0)
+            return n;
+        total += n;
+    }
+    return total;
+}
+
+// -------------------- 发送图片函数 --------------------
+void send_image(int client_fd, const char *filename)
+{
+    struct stat st;
+    if (stat(filename, &st) != 0)
+    {
+        perror("文件不存在");
+        return;
+    }
+
+    FILE *fp = fopen(filename, "rb");
+    if (!fp)
+    {
+        perror("打开文件失败");
+        return;
+    }
+
+    // 发送命令
+    char cmd[16] = "IMG_ADD";
+    send_all(client_fd, cmd, sizeof(cmd));
+
+    // 发送文件名（固定长度 128）
+    char basename[128] = {0};
+    const char *p = strrchr(filename, '/');
+    strcpy(basename, p ? p + 1 : filename);
+    send_all(client_fd, basename, sizeof(basename));
+
+    // 发送文件大小
+    int filesize = st.st_size;
+    send_all(client_fd, &filesize, sizeof(filesize));
+
+    // 发送文件内容
+    char buf[1024];
+    int n;
+    int sent = 0;
+    while ((n = fread(buf, 1, sizeof(buf), fp)) > 0)
+    {
+        send_all(client_fd, buf, n);
+        sent += n;
+    }
+    fclose(fp);
+
+    printf("✅ 已发送图片: %s (%d 字节)\n", basename, sent);
+}
+
+// -------------------- 删除图片函数 --------------------
+void delete_image(int client_fd, const char *filename)
+{
+    char cmd[16] = "IMG_DEL";
+    send_all(client_fd, cmd, sizeof(cmd));
+
+    int name_len = strlen(filename);
+    send_all(client_fd, &name_len, sizeof(name_len));
+    send_all(client_fd, filename, name_len);
+
+    printf("🗑️ 已发送删除指令: %s\n", filename);
+}
+
+// -------------------- 主程序 --------------------
+int main()
+{
+    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    int opt = 1;
+    setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt));
+
+    struct sockaddr_in server_addr, client_addr;
+    socklen_t len = sizeof(client_addr);
+
+    server_addr.sin_family = AF_INET;
+    server_addr.sin_port = htons(SERVER_PORT);
+    server_addr.sin_addr.s_addr = inet_addr(SERVER_IP);
+
+    if (bind(server_fd, (struct sockaddr *)&server_addr, sizeof(server_addr)) < 0)
+    {
+        perror("bind失败");
+        return -1;
+    }
+
+    listen(server_fd, 5);
+    printf("🚀 服务器启动，等待开发板连接...\n");
+
+    int client_fd = accept(server_fd, (struct sockaddr *)&client_addr, &len);
+    if (client_fd < 0)
+    {
+        perror("accept失败");
+        return -1;
+    }
+
+    printf("✅ 开发板已连接：%s\n", inet_ntoa(client_addr.sin_addr));
+
+    // 操作菜单
+    while (1)
+    {
+        printf("\n============================\n");
+        printf("1. 发送图片\n");
+        printf("2. 删除图片\n");
+        printf("3. 退出程序\n");
+        printf("============================\n");
+        printf("请输入操作编号: ");
+
+        int choice;
+        scanf("%d", &choice);
+
+        if (choice == 1)
+        {
+            char path[256];
+            printf("请输入要发送的图片路径: ");
+            scanf("%s", path);
+            send_image(client_fd, path);
+        }
+        else if (choice == 2)
+        {
+            char name[128];
+            printf("请输入要删除的图片名(不带路径): ");
+            scanf("%s", name);
+            delete_image(client_fd, name);
+        }
+        else if (choice == 3)
+        {
+            printf("服务器退出。\n");
+            break;
+        }
+        else
+        {
+            printf("无效输入。\n");
+        }
+    }
+
+    close(client_fd);
+    close(server_fd);
+    return 0;
+}

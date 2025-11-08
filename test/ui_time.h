@@ -1,18 +1,16 @@
-#ifndef __TIME_H_
-#define __TIME_H_
+#ifndef UI_TIME_H
+#define UI_TIME_H
 
-#include "../lvgl/lvgl.h"
-#include <unistd.h>
-#include <pthread.h>
-#include <time.h>
-#include <sys/time.h>
+#include "lvgl/lvgl.h"
+#include <time.h>  // 用于struct tm
 
-#include <stdio.h>
+// 外部声明（供其他文件访问）
+extern lv_obj_t *time_label;        // 时间显示标签
+extern lv_timer_t *time_timer;      // 时间更新定时器
+extern struct tm custom_time;       // 自定义时间缓存
 
- static lv_obj_t * time_label = NULL;        /**< 时间标签 */
-static lv_timer_t * time_timer = NULL;      /**< 时间更新定时器 */
- struct tm custom_time;               /**< 自定义时间缓存 */
-void create_time_widget(void);                                            // 创建时间控件
-void time_update_cb(lv_timer_t * timer);
+// 函数声明
+void create_time_widget(void);      // 创建时间控件
+void time_update_cb(lv_timer_t *timer);  // 时间更新回调
 
-#endif
+#endif // UI_TIME_H

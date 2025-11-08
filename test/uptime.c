@@ -23,7 +23,7 @@ void lv_li_kaiji(void)
     // 背景图片
     lv_obj_t * img1 = lv_img_create(lv_scr_act());
     lv_obj_set_pos(img1, 0, 0);
-    lv_img_set_src(img1, "S:/IOT/background.jpg");
+    lv_img_set_src(img1, "S:/IOT/background.png");
 
     // 背景文字
     lv_obj_t * backgroud_word = lv_label_create(lv_scr_act());

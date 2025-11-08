@@ -1,0 +1,10 @@
+说明：
+ 不需要安装led驱动 直接跑代码 led_test.c
+ 用哪一个led灯2参照代码说明
+
+驱动安装(如果开发板没有led驱动)
+[root@GEC6818 /IOT/bling]#rx led.ko
+[root@GEC6818 /IOT/bling]#chmod 0777 led.ko 
+[root@GEC6818 /IOT/bling]#insmod led.ko  //安装led驱动的指令
+insmod: can't insert 'led.ko': File exists (如果文件已存在就不需要安装)
+ 

@@ -1,4 +1,7 @@
 #include "test/uptime.h"
+#include "./test/ui_home.h"
+
+
 
 #define DISP_BUF_SIZE (480 * 1024)
 
@@ -6,6 +9,7 @@ int main(void)
 {
     /*lvgl初始化*/
     lv_init();
+    
 
     /*输出设备初始化及注册*/
     fbdev_init();
@@ -32,9 +36,29 @@ int main(void)
     indev_drv_1.read_cb = evdev_read;
     lv_indev_drv_register(&indev_drv_1);
   
-    ui_load_page(lv_li_kaiji);
+
+
+   // ui_load_page(lv_li_kaiji);
    //  lv_timer_create(switch_to_zhuce, 3000, NULL);
-   // ui_load_page(lv_zhuce);
+
+       // ------------------------ 创建线程 ------------------------
+    // 创建新的子线程用来接收客户端的数据
+if (thread_created == 0) {   // 还没创建过
+    pthread_t tid;
+    int ret = pthread_create(&tid, NULL, recv_client_info, NULL);
+    if (ret != 0) {
+        printf("pthread_create fail\n");
+        return -1;
+    }
+    pthread_detach(tid);  // 可选，让线程自动回收
+    thread_created = 1;   // ✅ 设置为已创建
+    printf("✅ recv_client_info 线程已创建\n");
+} else {
+    printf("⚠️ 线程已创建，跳过重复创建\n");
+}
+
+ //  ui_load_page(lv_zhuce);
+ ui_load_page(lv_li_kaiji);
 
     while(1) {
         lv_timer_handler(); // 事务处理
